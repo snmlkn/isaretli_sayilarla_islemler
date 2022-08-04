@@ -1,0 +1,46 @@
+------------------------------------------------------------------------------------------
+toplama,çıkarma ve tümleyen işlemi alma
+ALU tasarımı 4bitlik işaretli tamsayılarla
+------------------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_signed.all;
+entity uygulama2 is
+	Port(
+	clk: in std_logic;
+	rst: in std_logic;
+	n1: in std_logic_vector(3 downto 0);
+	n2: in std_logic_vector(3 downto 0);
+	op: in std_logic_vector(1 downto 0);
+	res: out std_logic_vector(4 downto 0)
+	);
+end uygulama2;
+
+architecture Behavioral of uygulama2 is
+	signal s1: signed(4 downto 0):=(others=> '0');
+	signal s2: signed(4 downto 0):=(others=> '0');
+	signal son: signed(4 downto 0):=(others=> '0');
+begin
+	process(clk,rst)
+	begin
+		if rst='1' then
+			son <= (others =>'0');
+		elsif rising_edge(clk) then
+			s1 <= signed (n1(3) & n1);
+			s2 <= signed (n2(3) & n2);
+			case op is
+				when "00" => -- toplama
+					son <= s1 + s2;
+				when "01" => -- çıkarma
+					-- son <= s1 - s2;
+					son <= s1 + signed(not std_logic_vector(s2) + 1);
+				when "10" => -- 2'ye tümleyen
+					son <= signed(not std_logic_vector(s2) + 1);
+				when others => null;
+			end case;	
+		end if;
+		res <= std_logic_vector(son);
+	end process;
+end Behavioral;
